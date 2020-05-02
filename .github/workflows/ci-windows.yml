@@ -17,6 +17,12 @@ jobs:
         graalvm-version: '20.0.0.java8'
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: Test
+    - name: Verify java version
       run: |
         java -version
+    - name: Test
+      run: |
+        mvn clean install
+    - name: Check artifacts
+      run: |
+        ls -al target/

@@ -97,7 +97,7 @@
               mainClass User property: mainClass (no description available) outputDirectory (Default: ${project.build.directory}) Required: true User property: 
               outputDir (no description available) skip (Default: false) User property: skip (no description available) -->
             <configuration>
-              <skip>true</skip>
+              <skip>false</skip>
               <mainClass>com.github.enr.modern.App</mainClass>
               <imageName>modern</imageName>
             </configuration>
