@@ -14,31 +14,18 @@ jobs:
     - name: Setup Graal VM
       uses: DeLaGuardo/setup-graalvm@master
       with:
-        graalvm-version: '20.0.0.java8'
+        graalvm-version: '20.0.0.java11'
     - name: Checkout code
       uses: actions/checkout@v1
     - name: Verify java version
       run: |
         java -version
-
-
-
-    - name: install native-image
+    - name: Install native-image
       run: |
         %JAVA_HOME%/bin/gu.cmd install native-image
       shell: cmd
-    - name: version
-      run: dir "C:\Program Files (x86)\Microsoft Visual Studio"
-    - name: list it
-      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019"
-    - name: list it1
-      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
-    - name: list it2
-      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"
     - name: list it3
       run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary"
-    - name: testit
-      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build"
     - name: print page size
       run: wmic pagefile list /format:list
     - name: SetPageFile
