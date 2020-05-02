@@ -20,6 +20,8 @@ jobs:
     - name: Verify java version
       run: |
         java -version
+    - name: Setup Windows dev mode
+      uses: ilammy/msvc-dev-cmd@v1
     - name: Test
       run: |
         mvn clean install
