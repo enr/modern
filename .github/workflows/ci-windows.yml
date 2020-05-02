@@ -12,9 +12,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: setup-graalvm
-      uses: DeLaGuardo/setup-graalvm@3
+      uses: DeLaGuardo/setup-graalvm@master
       with:
-        graalvm-version: '19.3.0.java8' // GraalVM version, no pattern syntax available atm.
+        graalvm-version: '20.0.0.java8'
     - name: Checkout code
       uses: actions/checkout@v1
     - name: Test
