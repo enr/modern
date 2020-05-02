@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: setup-graalvm
+    - name: Setup Graal VM
       uses: DeLaGuardo/setup-graalvm@master
       with:
         graalvm-version: '20.0.0.java8'
@@ -20,11 +20,45 @@ jobs:
     - name: Verify java version
       run: |
         java -version
-    - name: Setup Windows dev mode
-      uses: ilammy/msvc-dev-cmd@v1
-    - name: Test
+
+
+
+    - name: install native-image
       run: |
+        %JAVA_HOME%/bin/gu.cmd install native-image
+      shell: cmd
+    - name: version
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio"
+    - name: list it
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019"
+    - name: list it1
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
+    - name: list it2
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"
+    - name: list it3
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary"
+    - name: testit
+      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build"
+    - name: print page size
+      run: wmic pagefile list /format:list
+    - name: SetPageFile
+      run: |
+        Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/al-cheb/PageFile/master/SetPageFileSize.ps1'))
+      shell: powershell
+    # - name: Setup Windows dev mode
+    #   uses: ilammy/msvc-dev-cmd@v1
+    - name: Cache Maven local repository
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Maven build
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
         mvn clean install
     - name: Check artifacts
       run: |
-        ls -al target/
+        dir target
