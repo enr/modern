@@ -45,8 +45,6 @@ jobs:
       run: |
         Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/al-cheb/PageFile/master/SetPageFileSize.ps1'))
       shell: powershell
-    # - name: Setup Windows dev mode
-    #   uses: ilammy/msvc-dev-cmd@v1
     - name: Cache Maven local repository
       uses: actions/cache@v1
       with:
@@ -54,6 +52,8 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
+    - name: Setup Windows dev mode
+      uses: ilammy/msvc-dev-cmd@v1
     - name: Maven build
       shell: cmd
       run: |
