@@ -25,7 +25,7 @@ jobs:
         cp target/modern-* target/artifacts
     - uses: actions/upload-artifact@v1
       with:
-        name: modern artifacts from ${{runner.os}} build
+        name: modern-${{runner.os}}-build
         path: target/artifacts
   linux:
     runs-on: ubuntu-latest
@@ -38,19 +38,19 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
+      # sudo apt-get install upx-ucl
+      # upx --brute target/modern-linux-*
       run: |
         wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-20.0.0/graalvm-ce-java11-linux-amd64-20.0.0.tar.gz
         tar xzf graalvm-ce-java11-linux-amd64-20.0.0.tar.gz
         export JAVA_HOME="$(pwd)/graalvm-ce-java11-20.0.0"
         ${JAVA_HOME}/bin/gu install native-image
-        sudo apt-get install upx-ucl
         ./mvnw --batch-mode package
-        upx --brute target/modern-linux-*
         mkdir target/artifacts
         cp target/modern-* target/artifacts
     - uses: actions/upload-artifact@v1
       with:
-        name: modern artifacts from ${{runner.os}} build
+        name: modern-${{runner.os}}-build
         path: target/artifacts
   windows:
     runs-on: windows-latest
@@ -79,7 +79,7 @@ jobs:
         copy target\modern-* target\artifacts
     - uses: actions/upload-artifact@v1
       with:
-        name: modern artifacts from ${{runner.os}} build
+        name: modern-${{runner.os}}-build
         path: target/artifacts
 
 
