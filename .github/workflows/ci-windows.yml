@@ -17,18 +17,18 @@ jobs:
         graalvm-version: '20.0.0.java11'
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: Verify java version
+    - name: Verify Java version
       run: |
         java -version
     - name: Install native-image
       run: |
         %JAVA_HOME%/bin/gu.cmd install native-image
       shell: cmd
-    - name: list it3
-      run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary"
-    - name: print page size
-      run: wmic pagefile list /format:list
-    - name: SetPageFile
+    # - name: List Windows 
+    #   run: dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary"
+    # - name: print page size
+    #   run: wmic pagefile list /format:list
+    - name: Set PageFile
       run: |
         Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/al-cheb/PageFile/master/SetPageFileSize.ps1'))
       shell: powershell
@@ -41,6 +41,9 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Setup Windows dev mode
       uses: ilammy/msvc-dev-cmd@v1
+    - name: Verify native-image version
+      run: |
+        native-image --version
     - name: Maven build
       shell: cmd
       run: |
