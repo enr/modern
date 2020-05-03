@@ -1,0 +1,26 @@
+name: GraalVM CI
+
+on: [push]
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      VCVARS_BAT: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+    steps:
+    - uses: actions/checkout@v1
+    - run: choco install graalvm --version=20.0.0 --no-progress
+    - name: Cache Maven packages
+      uses: actions/cache@v1
+      with:
+        path: .m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Build with Maven
+      shell: cmd
+      env:
+        JAVA_HOME: C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0
+      run: |
+        call "%JAVA_HOME%\bin\gu" install native-image
+        call "%VCVARS_BAT%"
+        call .\mvnw clean install
+

@@ -44,9 +44,9 @@ jobs:
     - name: Verify native-image version
       run: |
         native-image --version
-    - name: Verify environment
+    - name: Verify JAVA_HOME
       run: |
-        set
+        set JAVA_HOME
     - name: Maven build
       shell: cmd
       run: |
