@@ -2,6 +2,56 @@ name: GraalVM CI
 
 on: [push]
 jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Maven packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Build with Maven
+      run: |
+        wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-20.0.0/graalvm-ce-java11-darwin-amd64-20.0.0.tar.gz
+        tar xzf graalvm-ce-java11-darwin-amd64-20.0.0.tar.gz
+        export JAVA_HOME="$(pwd)/graalvm-ce-java11-20.0.0/Contents/Home/"
+        ${JAVA_HOME}/bin/gu install native-image
+        brew install upx
+        ./mvnw --batch-mode package
+        upx --brute target/modern-mac-*
+        mkdir target/artifacts
+        cp target/modern-* target/artifacts
+    - uses: actions/upload-artifact@v1
+      with:
+        name: modern artifacts from ${{runner.os}} build
+        path: target/artifacts
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Maven packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Build with Maven
+      run: |
+        wget -q https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-20.0.0/graalvm-ce-java11-linux-amd64-20.0.0.tar.gz
+        tar xzf graalvm-ce-java11-linux-amd64-20.0.0.tar.gz
+        export JAVA_HOME="$(pwd)/graalvm-ce-java11-20.0.0"
+        ${JAVA_HOME}/bin/gu install native-image
+        sudo apt-get install upx-ucl
+        ./mvnw --batch-mode package
+        upx --brute target/modern-linux-*
+        mkdir target/artifacts
+        cp target/modern-* target/artifacts
+    - uses: actions/upload-artifact@v1
+      with:
+        name: modern artifacts from ${{runner.os}} build
+        path: target/artifacts
   windows:
     runs-on: windows-latest
     env:
@@ -9,29 +59,27 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: choco install graalvm --version=20.0.0 --no-progress
+    - run: choco install upx --version=3.96 --no-progress
     - name: Cache Maven packages
       uses: actions/cache@v1
       with:
         path: .m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Install native-image
-      shell: cmd
-      env:
-        JAVA_HOME: C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0
-      run: |
-        call "%JAVA_HOME%\bin\gu" install native-image
-    - name: List Graal bin 
-      run: dir "C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0\bin"
-    - name: Create native-image.exe
-      run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" & .\bin\native-image.cmd -jar lib\graalvm\svm-driver.jar & move native-image.exe .\bin
-    - name: List Graal bin 
-      run: dir "C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0\bin"
     - name: Build with Maven
       shell: cmd
       env:
         JAVA_HOME: C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0
       run: |
+        call "%JAVA_HOME%\bin\gu" install native-image
         call "%VCVARS_BAT%"
-        call .\mvnw --settings .\.mvn\github-actions-windows-settings.xml clean install
+        call .\mvnw --batch-mode --settings .\.mvn\github-actions-windows-settings.xml package
+        upx --brute target/modern-windows-*
+        mkdir target\artifacts
+        copy target\modern-* target\artifacts
+    - uses: actions/upload-artifact@v1
+      with:
+        name: modern artifacts from ${{runner.os}} build
+        path: target/artifacts
+
 
