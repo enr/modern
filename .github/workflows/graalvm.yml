@@ -15,6 +15,12 @@ jobs:
         path: .m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
+    - name: List Graal bin 
+      run: dir "C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0\bin"
+    - name: Create native-image.exe
+      run: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" & .\bin\native-image.cmd -jar lib\graalvm\svm-driver.jar & move native-image.exe .\bin
+    - name: List Graal bin 
+      run: dir "C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0\bin"
     - name: Build with Maven
       shell: cmd
       env:
@@ -22,5 +28,5 @@ jobs:
       run: |
         call "%JAVA_HOME%\bin\gu" install native-image
         call "%VCVARS_BAT%"
-        call .\mvnw clean install
+        call .\mvnw --settings .\.mvn\github-actions-windows-settings.xml clean install
 
