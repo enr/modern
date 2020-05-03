@@ -18,7 +18,7 @@ jobs:
     - name: List Graal bin 
       run: dir "C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0\bin"
     - name: Create native-image.exe
-      run: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" & .\bin\native-image.cmd -jar lib\graalvm\svm-driver.jar & move native-image.exe .\bin
+      run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" & .\bin\native-image.cmd -jar lib\graalvm\svm-driver.jar & move native-image.exe .\bin
     - name: List Graal bin 
       run: dir "C:\Program Files\GraalVM\graalvm-ce-java11-20.0.0\bin"
     - name: Build with Maven
